@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/cartoon_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="136dp"
+        android:layout_height="200dp"
         android:layout_gravity="center_vertical"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_launcher_background" />
@@ -30,14 +30,15 @@
             android:layout_height="wrap_content"
             android:text="Başlık"
             android:textStyle="bold"
-            android:paddingTop="8dp"
-            android:textSize="14sp" />
+            android:paddingTop="4dp"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/cartoon_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="4dp"
             android:text="Açıklama"
-            android:textSize="12sp" />
+            android:textSize="18sp" />
     </LinearLayout>
 </LinearLayout>

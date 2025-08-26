@@ -96,7 +96,15 @@ public class ContentList extends AppCompatActivity {
         for (File folder : cartoonFolders) {
             if (folder.isDirectory()) {
                 String titleStr = folder.getName();
-                String description = "Açıklama burada olabilir";
+                String description = "";
+                File descriptionFile = new File(folder, "description.txt");
+                if (descriptionFile.exists()) {
+                    try {
+                        description = new String(java.nio.file.Files.readAllBytes(descriptionFile.toPath()));
+                    } catch (java.io.IOException e) {
+                        Log.e("ContentList", "description.txt okunamadı: " + e.getMessage());
+                    }
+                }
                 File thumbnail = new File(folder, "thumbnail.jpg");
                 String thumbnailPath = thumbnail.exists() ? thumbnail.getAbsolutePath() : null;
 
