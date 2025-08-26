@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(() -> tapCount = 0, 2500);
             }
         });
-
+        // Apply immersive sticky mode
+        hideSystemUI();
     }
 
     private void showAdminDialog() {
@@ -161,6 +162,24 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "İzin reddedildi", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+    private void hideSystemUI() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+        );
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
         }
     }
 }

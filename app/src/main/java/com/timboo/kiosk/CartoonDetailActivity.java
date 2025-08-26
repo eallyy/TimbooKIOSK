@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.ViewGroup;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -43,6 +44,8 @@ public class CartoonDetailActivity extends AppCompatActivity {
         descriptionView.setText(description);
 
         loadEpisodes();
+
+        enableImmersiveMode();
     }
 
     private void loadEpisodes() {
@@ -84,5 +87,17 @@ public class CartoonDetailActivity extends AppCompatActivity {
 
             episodeListLayout.addView(episodeTextView);
         }
+    }
+
+    private void enableImmersiveMode() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
     }
 }
