@@ -124,6 +124,16 @@ public class ContentList extends AppCompatActivity {
                     titleView.setText(titleStr);
                     descriptionView.setText(description);
 
+                    String finalDescription = description;
+                    itemView.setOnClickListener(v -> {
+                        Intent intent = new Intent(ContentList.this, CartoonDetailActivity.class);
+                        intent.putExtra("title", titleStr);
+                        intent.putExtra("description", finalDescription);
+                        intent.putExtra("thumbnail", thumbnailPath);
+                        intent.putExtra("folder", folder.getAbsolutePath());
+                        startActivity(intent);
+                    });
+
                     contentContainer.addView(itemView);
                 }
             }

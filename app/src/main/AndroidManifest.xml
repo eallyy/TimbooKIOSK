@@ -24,6 +24,7 @@
         <activity
             android:name=".ContentList"
             android:exported="false" />
+        <activity android:name=".CartoonDetailActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
