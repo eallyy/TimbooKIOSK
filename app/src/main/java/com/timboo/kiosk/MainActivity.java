@@ -1,15 +1,21 @@
 package com.timboo.kiosk;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
@@ -19,9 +25,12 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,9 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private int tapCount = 0;
     private Handler handler = new Handler();
     private static final String PASSWORD = "1234";
-    private static final String TIMBOO_PACKAGE = "com.example.timboo";
-    private static final String TIMBOO_ACTIVITY = "com.example.timboo.MainActivity";
-    private boolean allowLaunch = true;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -40,21 +46,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        batteryText = findViewById(R.id.battery_text);
-        loadingText = findViewById(R.id.loading_text);
+        if (!hasStoragePermission()) {
+            requestStoragePermission();
+        }
 
-        Handler dotHandler = new Handler();
-        Runnable dotRunnable = new Runnable() {
-            int dotCount = 0;
-            @Override
-            public void run() {
-                dotCount = (dotCount + 1) % 4;
-                String dots = new String(new char[dotCount]).replace("\0", ".");
-                loadingText.setText("Timboo Cafe Yükleniyor" + dots);
-                dotHandler.postDelayed(this, 300);
-            }
-        };
-        dotHandler.post(dotRunnable);
+        batteryText = findViewById(R.id.battery_text);
+
+        Button startButton = findViewById(R.id.start_button);
+        startButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ContentList.class);
+            startActivity(intent);
+        });
 
         setupKioskPermissions();
         startKioskMode();
@@ -71,32 +73,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Launch Timboo Cafe in 3 seconds
-        handler.postDelayed(this::launchTimbooCafe, 3000);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (allowLaunch) {
-            handler.postDelayed(this::launchTimbooCafe, 3000);
-        }
-    }
-
-    private void launchTimbooCafe() {
-        try {
-            Intent intent = new Intent();
-            intent.setClassName(TIMBOO_PACKAGE, TIMBOO_ACTIVITY);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startLockTask();
-            startActivity(intent);
-        } catch (Exception e) {
-            Toast.makeText(this, "Timboo Cafe başlatılamadı.", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void showAdminDialog() {
-        allowLaunch = false;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Yetkili Girişi");
 
@@ -110,16 +89,14 @@ public class MainActivity extends AppCompatActivity {
                 finishAffinity(); // Exit app
             } else {
                 Toast.makeText(this, "Şifre hatalı!", Toast.LENGTH_SHORT).show();
-                allowLaunch = true;
             }
         });
 
         builder.setNegativeButton("İptal", (dialog, which) -> {
-            allowLaunch = true;
             dialog.dismiss();
         });
 
-        builder.setOnDismissListener(dialog -> allowLaunch = true);
+        builder.setOnDismissListener(dialog -> {});
         builder.show();
     }
 
@@ -138,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName adminComponent = new ComponentName(this, MyDeviceAdminReceiver.class);
         if (dpm != null && dpm.isDeviceOwnerApp(getPackageName())) {
-            dpm.setLockTaskPackages(adminComponent, new String[]{getPackageName(), TIMBOO_PACKAGE});
+            dpm.setLockTaskPackages(adminComponent, new String[]{getPackageName()});
         }
     }
 
@@ -146,6 +123,44 @@ public class MainActivity extends AppCompatActivity {
         DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         if (dpm != null && dpm.isLockTaskPermitted(getPackageName())) {
             startLockTask();
+        }
+    }
+
+    private boolean hasStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager();
+        } else {
+            int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            return result == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    private void requestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            } catch (Exception e) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                startActivity(intent);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    101);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 101 && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "İzin verildi", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "İzin reddedildi", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

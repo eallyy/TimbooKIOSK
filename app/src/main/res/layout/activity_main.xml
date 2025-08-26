@@ -3,17 +3,89 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
 
-    <TextView
-        android:id="@+id/loading_text"
+    <!-- Top Flags -->
+    <ImageView
+        android:id="@+id/top_flags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/party_flags"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="-100dp" />
+
+    <!-- Background Characters -->
+    <ImageView
+        android:id="@+id/left_character"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        android:src="@drawable/spongebob"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="36dp"
+        android:layout_marginBottom="36dp" />
+
+    <ImageView
+        android:id="@+id/right_character"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        android:src="@drawable/mickey"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="64dp" />
+
+    <!-- Center Text Container -->
+    <LinearLayout
+        android:id="@+id/text_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Timboo Cafe Yükleniyor..."
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:layout_centerInParent="true"/>
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_centerInParent="true">
 
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EĞLENCEYE HAZIR MISINN?"
+            android:textColor="#000000"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/kg_happy" />
+
+        <TextView
+            android:id="@+id/subtitle_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ARE YOU READY TO HAVE FUN?"
+            android:textColor="#FF5722"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/kg_happy"
+            android:layout_marginTop="12dp" />
+
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Başla / Start"
+            android:fontFamily="@font/kg_happy"
+            android:textColor="#000000"
+            android:background="@android:color/transparent"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"/>
+    </LinearLayout>
+
+    <!-- Battery Text remains in top-right corner -->
     <TextView
         android:id="@+id/battery_text"
         android:layout_width="wrap_content"

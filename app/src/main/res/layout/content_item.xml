@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="160dp"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@android:color/white"
+    android:id="@+id/content_container"
+    android:elevation="4dp">
+
+    <ImageView
+        android:id="@+id/cartoon_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_vertical"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_background" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingStart="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/cartoon_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Başlık"
+            android:textStyle="bold"
+            android:paddingTop="8dp"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/cartoon_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Açıklama"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>
