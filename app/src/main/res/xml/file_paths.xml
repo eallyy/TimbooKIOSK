@@ -1,0 +1,12 @@
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Uygulama içi dosyalar -->
+    <external-files-path
+        name="external_files"
+        path="." />
+
+    <!-- Harici SD kart: TimbooCartoons root klasörünü kapsayacak şekilde tanımlıyoruz -->
+    <external-path
+        name="external_sd"
+        path="TimbooCartoons/" />
+</paths>

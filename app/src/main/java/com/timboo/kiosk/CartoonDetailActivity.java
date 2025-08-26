@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 
@@ -45,7 +46,8 @@ public class CartoonDetailActivity extends AppCompatActivity {
     }
 
     private void loadEpisodes() {
-        File episodesDir = new File(folderPath, "episodes");
+        File cartoonFolder = new File(folderPath);
+        File episodesDir = new File(cartoonFolder, "episodes");
         if (!episodesDir.exists() || !episodesDir.isDirectory()) return;
 
         File[] videos = episodesDir.listFiles((dir, name) ->
@@ -53,23 +55,34 @@ public class CartoonDetailActivity extends AppCompatActivity {
         );
         if (videos == null) return;
 
-        for (File video : videos) {
-            String episodeTitle = video.getName().replace(".mp4", "");
+        for (File episodeFile : videos) {
+            String episodeTitle = episodeFile.getName().replace(".mp4", "");
 
-            TextView textView = new TextView(this);
-            textView.setText(episodeTitle);
-            textView.setTextSize(18);
-            textView.setPadding(16, 16, 16, 16);
-            textView.setBackgroundColor(Color.parseColor("#EEEEEE"));
+            TextView episodeTextView = new TextView(this);
+            episodeTextView.setText(episodeTitle);
+            episodeTextView.setTextSize(18);
+            episodeTextView.setPadding(16, 16, 16, 16);
+            episodeTextView.setBackgroundColor(Color.parseColor("#EEEEEE"));
             // Add margin to the bottom of each episode item
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             );
             params.setMargins(0, 0, 0, 20); // Add 20px bottom margin
-            textView.setLayoutParams(params);
+            episodeTextView.setLayoutParams(params);
 
-            episodeListLayout.addView(textView);
+            // Set click listener to play video using internal activity
+            episodeTextView.setOnClickListener(v -> {
+                String episodePath = cartoonFolder.getAbsolutePath() + "/episodes/" + episodeFile.getName();
+                File videoFile = new File(episodePath);
+                Uri videoUri = Uri.fromFile(videoFile);
+
+                Intent intent = new Intent(this, VideoPlayerActivity.class);
+                intent.putExtra("videoUri", videoUri.toString());
+                startActivity(intent);
+            });
+
+            episodeListLayout.addView(episodeTextView);
         }
     }
 }
